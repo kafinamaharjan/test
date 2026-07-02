@@ -48,7 +48,7 @@ app.get('/api/products', async (req, res) => {
   }
 });
 
-const DEFAULT_PORT = 5000;
+const DEFAULT_PORT = 5050;
 const PORT = Number(process.env.PORT) || DEFAULT_PORT;
 const hasExplicitPort = Boolean(process.env.PORT);
 
