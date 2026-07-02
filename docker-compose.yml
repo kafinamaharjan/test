@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: supersecretpassword
       POSTGRES_DB: ecommerce
     ports:
-      - "5433:5432"
+      - "8627:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
@@ -21,10 +21,10 @@ services:
     container_name: ecommerce_backend
     restart: always
     ports:
-      - "5050:5050"
+      - "7319:7319"
     environment:
       DATABASE_URL: postgres://admin:supersecretpassword@db:5432/ecommerce
-      PORT: 5050
+      PORT: 7319
     depends_on:
       - db
     networks:

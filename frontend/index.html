@@ -29,8 +29,8 @@
     async function loadProducts() {
         const catalogContainer = document.getElementById('catalog');
         try {
-            // Reaches out to the backend exposed on host machine port 5050
-            const response = await fetch('http://localhost:5050/api/products');
+            // Reaches out to the backend exposed on host machine port 7319
+            const response = await fetch('http://localhost:7319/api/products');
             const products = await response.json();
             
             if(products.length === 0) {
