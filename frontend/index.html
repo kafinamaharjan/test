@@ -3,57 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Curated Marketplace</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #fafafa; color: #333; margin: 0; padding: 20px; }
-        header { text-align: center; padding: 20px 0; border-bottom: 1px solid #eee; }
-        .catalog { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; max-width: 1200px; margin: 40px auto; }
-        .card { background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s; }
-        .card:hover { transform: translateY(-4px); }
-        .card img { width: 100%; height: 250px; object-fit: cover; }
-        .content { padding: 20px; }
-        .price { font-weight: bold; color: #b12704; font-size: 1.2rem; margin: 10px 0; }
-        .btn { display: block; width: 100%; text-align: center; background: #111; color: #fff; padding: 10px 0; text-decoration: none; border-radius: 4px; font-size: 0.9rem; }
-    </style>
+    <title>The Collection Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <header class="site-header">
+        <nav class="nav">
+            <a class="brand" href="#" aria-label="The Collection Store home">
+                <span class="brand-mark">TC</span>
+                <span>The Collection Store</span>
+            </a>
+            <button class="icon-button cart-toggle" type="button" aria-label="Open cart">
+                <span class="cart-icon" aria-hidden="true">Bag</span>
+                <span class="cart-count" id="cartCount">0</span>
+            </button>
+        </nav>
 
-<header>
-    <h1>The Collection Store</h1>
-    <p>Dynamic items loaded straight from your containerized PostgreSQL instance.</p>
-</header>
-
-<main class="catalog" id="catalog"></main>
-
-<script>
-    async function loadProducts() {
-        const catalogContainer = document.getElementById('catalog');
-        try {
-            // Reaches out to the backend exposed on host machine port 7319
-            const response = await fetch('http://localhost:7319/api/products');
-            const products = await response.json();
-            
-            if(products.length === 0) {
-                catalogContainer.innerHTML = '<p>No items found in stock.</p>';
-                return;
-            }
-
-            catalogContainer.innerHTML = products.map(item => `
-                <div class="card">
-                    <img src="${item.image_url}" alt="${item.name}">
-                    <div class="content">
-                        <h3>${item.name}</h3>
-                        <p>${item.description}</p>
-                        <div class="price">$${item.price}</div>
-                        <a href="#" class="btn" onclick="alert('Item added to cart!')">Add to Cart</a>
-                    </div>
+        <section class="hero">
+            <div class="hero-copy">
+                <span class="eyebrow">Container-powered catalog</span>
+                <h1>Curated essentials with a calmer shopping flow.</h1>
+                <p>Browse standout pieces, compare prices quickly, and keep your cart in view while items load from PostgreSQL.</p>
+                <div class="hero-actions">
+                    <a class="primary-link" href="#catalog">Shop collection</a>
+                    <span class="status-pill" id="apiStatus">Connecting to API</span>
                 </div>
-            `).join('');
-        } catch (err) {
-            catalogContainer.innerHTML = `<p style="color:red;">Error reaching API backend: ${err.message}</p>`;
-        }
-    }
-    window.onload = loadProducts;
-</script>
+            </div>
+            <div class="hero-panel" aria-label="Featured product preview">
+                <div class="panel-image"></div>
+                <div class="panel-meta">
+                    <span>Featured</span>
+                    <strong>Modern finds, refreshed live</strong>
+                </div>
+            </div>
+        </section>
+    </header>
+
+    <main>
+        <section class="toolbar" aria-label="Catalog controls">
+            <label class="search-field">
+                <span>Search</span>
+                <input id="searchInput" type="search" placeholder="Search jackets, rings, sarees..." autocomplete="off">
+            </label>
+
+            <label class="select-field">
+                <span>Sort</span>
+                <select id="sortSelect">
+                    <option value="featured">Featured</option>
+                    <option value="price-asc">Price: low to high</option>
+                    <option value="price-desc">Price: high to low</option>
+                    <option value="name-asc">Name: A to Z</option>
+                </select>
+            </label>
+        </section>
+
+        <section class="catalog-shell">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">Live inventory</span>
+                    <h2>Shop the collection</h2>
+                </div>
+                <p id="resultCount">Loading products...</p>
+            </div>
+            <div class="catalog" id="catalog" aria-live="polite"></div>
+        </section>
+    </main>
+
+    <aside class="cart-drawer" id="cartDrawer" aria-hidden="true">
+        <div class="cart-header">
+            <div>
+                <span class="eyebrow">Your bag</span>
+                <h2>Cart</h2>
+            </div>
+            <button class="icon-button" id="closeCart" type="button" aria-label="Close cart">Close</button>
+        </div>
+        <div class="cart-items" id="cartItems"></div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <strong id="cartTotal">$0.00</strong>
+            </div>
+            <button class="checkout-button" type="button">Checkout</button>
+        </div>
+    </aside>
+    <div class="scrim" id="scrim"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="app.js"></script>
 </body>
 </html>
